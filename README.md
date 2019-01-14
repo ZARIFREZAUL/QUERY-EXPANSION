@@ -14,7 +14,7 @@ Unexpected Query Results:
 
 We cannot get the exact result which we expect in Pipilika Search Engine when we use a portion of our information as a search key.
 
-\item  Lack of Intelligent Query Results: 
+Lack of Intelligent Query Results: 
 
 We have observed that the query results that we retrieved by performing a search are not intelligent search results.
 Those results are unable to fulfill users expected search information in some cases.
