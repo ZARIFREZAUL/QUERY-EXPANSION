@@ -61,16 +61,8 @@ class BM25(object):
     def ranked(self, query, length):
         """Returns the `length` most relevant documents according to `query`"""
         scores = [(index, score) for index, score in enumerate(self._get_scores(query))]
-        
-        """
-        for index, score in scores:
-            print("(",index,"---", score,")")
-
-        """
         scores.sort(key=lambda x: x[1], reverse=True)
-        
-        indexes, _ = self._unpack(scores)
-        return indexes[:length]
+        return scores[:length]#indexes[:length]
 
     @staticmethod
     def _unpack(tuples):
