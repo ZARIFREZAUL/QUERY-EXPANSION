@@ -3,7 +3,7 @@ warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 warnings.filterwarnings(action='ignore', category=FutureWarning, module='gensim')
 
 
-import stop_words
+
 import nltk
 import six
 from nltk.corpus import mac_morpho
@@ -17,7 +17,8 @@ from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
 import re
 
-query=input('ENTER SEARCH KEY:')
+query=input('Enter Search Key:')
+
 
 
 
@@ -82,20 +83,7 @@ def unique_list(text):
 
 model = Word2Vec.load('D:/200D_model_cbow/word2vec_model.model')
 
-def Removing_Stemming_word(Final):
-    import difflib
-    Filter=Final.copy()
-    Last=[]
-    for i in Final:
-        if i in Filter:
-         Last.append(i)
-         Filter.remove(i)
-         for j in Filter:
-            value=difflib.SequenceMatcher(None, i, j).ratio()
-            if value>0.51 :
-                    Filter.remove(j);
 
-    return Last
 
 def Retrieve_Similar_Word(word,model):
     import difflib
@@ -103,8 +91,8 @@ def Retrieve_Similar_Word(word,model):
     not_similar_unique=""
     FINAL_OUTPUT=""
     if word in word_vectors.vocab:
-        word2vec=model.wv.most_similar(word, topn=50)
-        iword=''.join(str(e) for e in word2vec)                   #string covert
+        word2vec=model.wv.most_similar(word)
+        iword=''.join(str(e) for e in word2vec) #string covert
         clean_word2vec=''
         for i in iword:
               line = re.sub('[^ \nঁংঃঅআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহািীুূৃ৅েৈ৉োৌ্ৎৗ৘ড়ঢ়য়০১২৩৪৫৬৭৮৯]', '', i[0])
@@ -120,17 +108,13 @@ def Retrieve_Similar_Word(word,model):
         score = difflib.SequenceMatcher(None, word,not_similar_unique.split()).ratio()
         
         FINAL_OUTPUT=''.join([i for i in word])+' '
-        #print(not_similar_unique)
  
         for i in not_similar_unique.split():
             value=difflib.SequenceMatcher(None, word, i).ratio()
-            #print(i,'-->>>',value)
-            if(value<0.51):
+            if(value<0.81):
                 FINAL_OUTPUT+=i+" "
                 
-    FINAL_OUTPUT=Removing_Stemming_word(FINAL_OUTPUT.split())
-    FINAL_OUTPUT=' '.join(str(e) for e in FINAL_OUTPUT)
-    return FINAL_OUTPUT
+    return FINAL_OUTPUT.rstrip()
 
 
 
@@ -140,47 +124,45 @@ def Retrieve_Similar_Word(word,model):
 #######################################################################Import Stopwords From Stopword_txt_file#######################################################
 
 def Stopword_Retrieve():
-    from_filename="STOP_WORD.txt"
+
+    from_filename = "STOP_WORD.txt"
     from_file_read = open(from_filename, 'r', encoding="UTF-8")
     contents_read = from_file_read.read()
-
+    from_file_read.close()
 
     stop_words = ""
     for i in contents_read.split("\n"):
         stop_words+=i+" "
-    stop_words=re.sub('[^ ঁংঃঅআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহািীুূৃ৅েৈ৉োৌ্ৎৗ৘ড়ঢ়য়০১২৩৪৫৬৭৮৯]',"",stop_words)
+        
     stop_words_split=stop_words.split()
-    ulist = []
-    [ulist.append(x) for x in stop_words_split if x not in ulist]
-    return ulist
+    return stop_words_split
+
+
+
+
+
+
+
 
 
 
 
 #######################################################################Removing Stopwords from Search key#######################################################
 
-
 search_key=""
 query_len=len(query.split())
 Retrieved_Stopword=Stopword_Retrieve()
-Stopword_List=""
-for i in Retrieved_Stopword:
-    Stopword_List+=i+", "
-#print("Stopword_List:\n",Stopword_List.rstrip())
 if query_len>1:
  for i in query.split():
+     #print(r)
      if i not in Retrieved_Stopword: 
         search_key+=i+" "
 else:
     search_key=query
 
-INPUT=search_key
+INPUT=search_key  
 
 
-
-#INPUT=search_key.rstrip()
-
-print("SEARCH KEY AFTER REMOVING STOP WORD-->>",INPUT)
 
 #################################################################RETRIEVING_DOCUMENT_FROM_SERVER_AND_FILTERING################################################################
 
@@ -243,6 +225,7 @@ for position, index in enumerate(bm25.ranked(query, 25)):
 
 
 not_similar_final_document=Removing_Word(INPUT,adding_final_document)
+
 not_similar_final_term=unique_list(not_similar_final_document.split())
 not_similar_final_term=re.sub('[^ \nঁংঃঅআইঈউঊঋএঐওঔকখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহািীুূৃ৅েৈ৉োৌ্ৎৗ৘ড়ঢ়য়০১২৩৪৫৬৭৮৯]', '', not_similar_final_term)
 
@@ -304,85 +287,14 @@ for i in not_similar_final_term.split():
         
 print("FINAL_QUERY_EXPANSION---->>",expansion_query)
 
-x=""
+#print(expand_sentence)
 
 
-print("EXPANDED SENTENCE:\n")
 for i in expand_sentence[0]:
-    
     for j in expand_sentence[1]:
-        
         for k in expand_sentence[2]:
-            if len(expand_sentence)>3:
-               
-                 for l in expand_sentence[3]:
-                     if len(expand_sentence)>4:
-
-                         
-                        for m in expand_sentence[4]:
-                            if len(expand_sentence)>5:
-
-                                
-                                   for n in expand_sentence[5]:
-                                        if len(expand_sentence)>6:
-
-                                           
-                                               for o in expand_sentence[5]:
-                                                   if len(expand_sentence)>7:
-
-                                                       
-                                                          for p in expand_sentence[5]:
-                                                              if len(expand_sentence)>8:
-
-                                                                  
-                                                                      for q in expand_sentence[5]:
-                                                                          if len(expand_sentence)>9:
-
-                                                                              
-                                                                                for r in expand_sentence[5]:
-                                                                                    if len(expand_sentence)>10:
-
-                                                                              
-                                                                                           for s in expand_sentence[5]:
-                                                                                               x=i+" "+j+" "+k +" "+l+" "+m+" "+n+" "+o+" "+p+" "+q+" "+r+" "+s
-                                                                                               print(x)
-
-                                                                                    else:
-                                                                                        x=i+" "+j+" "+k +" "+l+" "+m+" "+n+" "+o+" "+p+" "+q+" "+r
-                                                                                        print(x)
-
-
-                                                                          else:
-                                                                             x=i+" "+j+" "+k +" "+l+" "+m+" "+n+" "+o+" "+p+" "+q
-                                                                             print(x) 
-
-
-                                                              else:
-                                                                  x=i+" "+j+" "+k +" "+l+" "+m+" "+n+" "+o+" "+p
-                                                                  print(x)
-
-                                                   else:
-                                                        x=i+" "+j+" "+k +" "+l+" "+m+" "+n+" "+o
-                                                        print(x)
-
-
-
-                                        else:
-                                            x=i+" "+j+" "+k +" "+l+" "+m+" "+n
-                                            print(x)
-
-
-                                       
-
-                            else:           
-                                x=i+" "+j+" "+k +" "+l+" "+m
-                                print(x)
-
-                     else:
-                         x=i+" "+j+" "+k +" "+l
-                         print(x)
-            else:
-                x=i+" "+j+" "+k
-                print(x)
-
+            for l in expand_sentence[3]:
+                for m in expand_sentence[4]:
+                    x=i+" "+j+" "+k+" "+l+" "+m
+                    print(x) 
 
